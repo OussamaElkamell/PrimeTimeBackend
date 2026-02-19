@@ -148,5 +148,10 @@ SIMPLE_JWT = {
 
 # CORS Settings
 CORS_ALLOW_ALL_ORIGINS = DEBUG  # Only allow all in Debug mode
-if not DEBUG:
-    CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '').split(',')
+CORS_ALLOWED_ORIGINS = [
+    'https://primetime.synervy-technologies.tn',
+]
+# Extend with any extra origins from env
+extra = os.getenv('CORS_ALLOWED_ORIGINS', '')
+if extra:
+    CORS_ALLOWED_ORIGINS += [o.strip() for o in extra.split(',') if o.strip()]
