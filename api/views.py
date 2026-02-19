@@ -20,7 +20,7 @@ class RegisterView(generics.CreateAPIView):
             email=self.request.data.get('email', ''),
             password=self.request.data['password']
         )
-        return user
+        serializer.instance = user
 
 class ProfileView(generics.RetrieveAPIView):
     serializer_class = UserSerializer
