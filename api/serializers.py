@@ -1,15 +1,21 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Todo, Session, Segment
+from .models import Todo, Session, Segment, Profile
 from django.utils import timezone
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ('zen_mode_audio_enabled', 'ai_enabled', 'ai_provider', 'ollama_url', 'ollama_model', 'groq_api_key', 'groq_model', 'settings_json')
 
 class UserSerializer(serializers.ModelSerializer):
     current_streak = serializers.SerializerMethodField()
     total_focus_minutes = serializers.SerializerMethodField()
+    profile = ProfileSerializer(read_only=True)
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'current_streak', 'total_focus_minutes')
+        fields = ('id', 'username', 'email', 'current_streak', 'total_focus_minutes', 'profile')
 
     def get_current_streak(self, obj):
         from datetime import date, timedelta

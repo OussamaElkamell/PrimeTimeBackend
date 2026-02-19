@@ -5,8 +5,8 @@ from django.contrib.auth.models import User
 from rest_framework import generics, status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import Todo, Session, Segment
-from .serializers import TodoSerializer, SessionSerializer, SegmentSerializer, UserSerializer
+from .models import Todo, Session, Segment, Profile
+from .serializers import TodoSerializer, SessionSerializer, SegmentSerializer, UserSerializer, ProfileSerializer
 
 # Auth Views
 class RegisterView(generics.CreateAPIView):
@@ -20,6 +20,8 @@ class RegisterView(generics.CreateAPIView):
             email=self.request.data.get('email', ''),
             password=self.request.data['password']
         )
+        # Create profile for new user
+        Profile.objects.create(user=user)
         serializer.instance = user
 
 class ProfileView(generics.RetrieveAPIView):
@@ -34,6 +36,13 @@ class DeleteAccountView(APIView):
         user = request.user
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class ProfileUpdateView(generics.RetrieveUpdateAPIView):
+    serializer_class = ProfileSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        return Profile.objects.get_or_create(user=self.request.user)[0]
 
 # Todo Views
 class TodoListCreateView(generics.ListCreateAPIView):
